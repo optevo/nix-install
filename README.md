@@ -9,7 +9,7 @@ It is intended to get a Mac into a state where it can pull a **private Nix confi
 1. Installs Apple Developer Tools if needed.
 2. Installs Nix via the Determinate Systems installer.
 3. Loads Nix into the current shell.
-4. Authenticates with GitHub CLI.
+4. Authenticates with GitHub CLI or Keychain.
 5. Clones the private Nix configuration repo into `~/.config/nix`.
 6. Applies the system configuration via nix-darwin.
 
@@ -17,7 +17,7 @@ It is intended to get a Mac into a state where it can pull a **private Nix confi
 
 ## Usage
 
-- Run the script directly:
+Run the script directly:
 
 ```sh
 bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-install/main/install.sh)

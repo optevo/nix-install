@@ -12,6 +12,8 @@ if [ ! -t 0 ]; then
     echo "No TTY detected. This bootstrap requires interactive input."
     exit 1
 fi
+
+
 set -euo pipefail
 
 # Force the script to start in the user's home directory

@@ -73,7 +73,7 @@ sudo chown -R "$USER:staff" "$CONFIG_DIR"
 
 # Then clone
 echo "Cloning private repo..."
-git clone -c credential.helper= "https://git:${GITHUB_PAT}@github.com/optevo/nix-config.git" "$CONFIG_DIR"
+git clone -c credential.helper= "https://oauth2:${GITHUB_PAT}@github.com/optevo/nix-config.git" "$CONFIG_DIR"
 
 # 5. Apply nix-darwin configuration (requires root)
 echo "Step 5: Applying system configuration via nix-darwin."

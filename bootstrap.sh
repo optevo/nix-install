@@ -59,7 +59,7 @@ read -p "Press Enter to open GitHub token settings page in your browser..."
 open "https://github.com/settings/personal-access-tokens"
 
 # Prompt for the token
-read -rsp "After generating or copying your token, enter your PAT (it will be hidden): " GITHUB_PAT
+read -rsp "Enter your personal access token (it will be hidden): " GITHUB_PAT
 echo
 
 # Ensure config directory is empty and owned by the user

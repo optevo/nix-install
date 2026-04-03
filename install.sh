@@ -13,6 +13,12 @@ if [ ! -t 0 ]; then
     exit 1
 fi
 
+# Abort if Command Line Tools install is already running
+if pgrep -f "Install Command Line Developer Tools" >/dev/null; then
+    echo "An Xcode Command Line Tools installation is already in progress."
+    echo "Please complete or cancel it before running this bootstrap."
+    exit 1
+fi
 
 set -euo pipefail
 

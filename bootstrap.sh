@@ -3,6 +3,9 @@
 
 set -euo pipefail
 
+# Force the script to start in the user's home directory
+cd "$HOME"
+
 PRIVATE_REPO="github:optevo/nix-config"      # Private repo
 CONFIG_DIR="${HOME}/.config/nix"             # Private Nix configuration
 

@@ -21,4 +21,4 @@ It is intended to get a Mac into a state where it can pull your **private Nix co
   or run the script directly:
 
 ```sh
-bash <(curl -sL -H "Cache-Control: no-cache" "https://raw.githubusercontent.com/optevo/nix-bootstrap/main/bootstrap.sh?ts=$(date +%s)")
+bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-bootstrap/main/bootstrap.sh)

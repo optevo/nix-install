@@ -20,4 +20,4 @@ It is intended to get a Mac into a state where it can pull a **private Nix confi
 - Run the script directly:
 
 ```sh
-bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-bootstrap/main/install.sh)
+bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-install/main/install.sh)

@@ -102,8 +102,14 @@ else
     read -p "Press Enter to open GitHub token settings..."
     open "https://github.com/settings/personal-access-tokens"
 
-    # Clean up any non-git folder that might be in the way
+    # Only back up if the config dir exists
     if [ -d "$CONFIG_DIR" ]; then
+        # Clean up old backup(s) before creating a new one
+        for old in "${CONFIG_DIR}.backup."*; do
+            [ -e "$old" ] && rm -rf "$old"
+        done
+
+        # Move current config to a timestamped backup
         mv "$CONFIG_DIR" "${CONFIG_DIR}.backup.$(date +%s)"
     fi
 

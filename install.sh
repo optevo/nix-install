@@ -80,7 +80,9 @@ else
     open "https://github.com/settings/personal-access-tokens"
 
     # Clean up any non-git folder that might be in the way
-    [ -d "$CONFIG_DIR" ] && sudo rm -rf "$CONFIG_DIR"
+    if [ -d "$CONFIG_DIR" ]; then
+        mv "$CONFIG_DIR" "${CONFIG_DIR}.backup.$(date +%s)"
+    fi
 
     echo "Starting clone... Please look for the 'Username' and 'Password' prompts below."
     
@@ -107,8 +109,7 @@ git add darwin-configuration.nix
 # Move existing shell profiles so nix-darwin can take over
 for file in /etc/bashrc /etc/zshrc; do
     # ONLY move if it's a real file (-f) AND NOT a symbolic link (! -L)
-    if [ -f "$file" ] && [ ! -L "$file" ]; then
-        echo "Backing up native $file (requires sudo)..."
+    if [ -f "$file" ] && [ ! -L "$file" ] && [ ! -e "$file.before-nix-darwin" ]; then
         sudo mv "$file" "$file.before-nix-darwin"
     fi
 done

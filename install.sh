@@ -104,7 +104,9 @@ REAL_USER=$(stat -f '%Su' /dev/console)
 sed -i '' -E "s/system\.primaryUser = \".*\"; # @USER_MARKER@/system.primaryUser = \"$REAL_USER\"; # @USER_MARKER@/" "darwin-configuration.nix"
 
 # Add the modified file to git so the Nix Flake can see the changes
-git add darwin-configuration.nix
+if ! git diff --quiet darwin-configuration.nix; then
+    git add darwin-configuration.nix
+fi
 
 # Move existing shell profiles so nix-darwin can take over
 for file in /etc/bashrc /etc/zshrc; do

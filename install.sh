@@ -45,38 +45,43 @@ if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
     . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
-# 4. Clone private repo using HTTPS and Personal Access Token (PAT)
-echo "Step 4: Clone private repo using HTTPS and Personal Access Token (PAT)..."
+# 4. Sync private configuration repository
+echo "Step 4: Syncing private configuration repository..."
 
 CONFIG_DIR="$HOME/.config/nix"
-PRIVATE_REPO="https://github.com/optevo/nix-config.git"
+REPO_URL="https://github.com/optevo/nix-config.git"
 
-echo "You need a GitHub Personal Access Token (PAT) to access the private repo."
-echo "The token must have read/write Contents permission on the repository."
-echo "If you can't see the token you previously generated, you may need to regenerate it."
-echo "If you haven't generated one yet, your browser will open GitHub's token page."
+# Tell Git to use the macOS Keychain (saves the token for future runs)
+git config --global credential.helper osxkeychain
 
-read -p "Press Enter to open GitHub token settings page in your browser..."
+if [ -d "$CONFIG_DIR/.git" ]; then
+    echo "Repository exists. Updating..."
+    cd "$CONFIG_DIR"
+    sudo chown -R "$USER:staff" "."
+    git fetch origin
+    git reset --hard origin/main
+else
+    echo "First-time setup detected."
+    echo "-----------------------------------------------------------"
+    echo "You need a GitHub Personal Access Token (PAT) for this private repo."
+    echo "1. When the browser opens, generate a token with 'repo' permissions."
+    echo "2. Copy the token."
+    echo "3. Come back here. Git will ask for your Username and Password."
+    echo "4. PASTE THE TOKEN as your Password."
+    echo "-----------------------------------------------------------"
+    
+    read -p "Press Enter to open GitHub token settings..."
+    open "https://github.com/settings/personal-access-tokens"
 
-# Open GitHub token page
-open "https://github.com/settings/personal-access-tokens"
+    # Clean up any non-git folder that might be in the way
+    [ -d "$CONFIG_DIR" ] && sudo rm -rf "$CONFIG_DIR"
 
-# Prompt for the token
-read -rsp "Enter your personal access token (it will be hidden): " GITHUB_PAT
-echo
-
-# Ensure config directory is empty and owned by the user
-if [ -d "$CONFIG_DIR" ]; then
-    echo "Removing old config directory (requires sudo)..."
-    sudo rm -rf "$CONFIG_DIR"
+    echo "Starting clone... Please look for the 'Username' and 'Password' prompts below."
+    
+    # Git will now prompt you natively and save the result to your Keychain
+    git clone "$REPO_URL" "$CONFIG_DIR"
+    sudo chown -R "$USER:staff" "$CONFIG_DIR"
 fi
-mkdir -p "$CONFIG_DIR"
-echo "Changing config directory ownership (requires sudo)..."
-sudo chown -R "$USER:staff" "$CONFIG_DIR"
-
-# Then clone
-echo "Cloning private repo..."
-git clone -c credential.helper= "https://oauth2:${GITHUB_PAT}@github.com/optevo/nix-config.git" "$CONFIG_DIR"
 
 # 5. Apply nix-darwin configuration (requires root)
 echo "Step 5: Applying system configuration via nix-darwin."

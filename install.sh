@@ -26,7 +26,7 @@ set -euo pipefail
 cd "$HOME"
 
 PRIVATE_REPO="github:optevo/nix-config"      # Private repo
-CONFIG_DIR="${HOME}/.config/nix"             # Private Nix configuration
+CONFIG_DIR="${HOME}/.config/nix"             # Local Nix configuration
 
 echo "=== Starting real Nix bootstrap ==="
 echo "Config directory: $CONFIG_DIR"

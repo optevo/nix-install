@@ -1,6 +1,6 @@
-# Nix Bootstrap / Installer / Updater (Public)
+# Nix Bootstrap / Installer / Updater
 
-This repository provides a public instraller for setting up Nix and nix-darwin on macOS.
+This repository provides a public installer for setting up Nix and nix-darwin on macOS (M-series).
 
 It is intended to get a Mac into a state where it can pull a **private Nix configuration repo** and apply the system configuration.  
 

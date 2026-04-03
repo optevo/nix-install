@@ -21,4 +21,4 @@ It is intended to get a Mac into a state where it can pull your **private Nix co
   or run the script directly:
 
 ```sh
-bash <(curl -sL https://github.com/your-org/nix-bootstrap/raw/main/bootstrap.sh)
+bash <(curl -sL https://github.com/optevo/nix-bootstrap/raw/main/bootstrap.sh)

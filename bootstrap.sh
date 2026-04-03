@@ -33,20 +33,31 @@ if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
     . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
-# 4. Authenticate GitHub CLI
-echo "Step 4: GitHub CLI authentication..."
-nix run nixpkgs#gh -- auth login
+# 4. Clone private repo using HTTPS and Personal Access Token (PAT)
+echo "Step 4: Clone private repo using HTTPS and Personal Access Token (PAT)..."
 
-# 5. Clone or update the private Nix configuration
-echo "Step 5: Cloning or updating private config..."
+CONFIG_DIR="$HOME/.config/nix"
+PRIVATE_REPO="https://github.com/optevo/nix-config.git"
+
+echo "You need a GitHub Personal Access Token (PAT) to access the private repo."
+echo "If you haven't generated one, your browser will open GitHub's token page."
+read -p "Press Enter to open GitHub token settings page in your browser..."
+
+open "https://github.com/settings/tokens"
+
+read -rsp "Enter your PAT (it will be hidden): " GITHUB_PAT
+echo
+
 if [ ! -d "$CONFIG_DIR/.git" ]; then
-    nix run nixpkgs#gh -- repo clone "$PRIVATE_REPO" "$CONFIG_DIR"
+    echo "Cloning private repo..."
+    git clone "https://${GITHUB_PAT}@github.com/optevo/nix-config.git" "$CONFIG_DIR"
 else
+    echo "Updating existing config..."
     git -C "$CONFIG_DIR" pull --ff-only
 fi
 
-# 6. Apply nix-darwin configuration
-echo "Step 6: Applying system configuration via nix-darwin..."
+# 5. Apply nix-darwin configuration
+echo "Step 5: Applying system configuration via nix-darwin..."
 cd "$CONFIG_DIR"
 nix run github:LnL7/nix-darwin -- switch --flake .
 

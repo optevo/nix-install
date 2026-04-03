@@ -17,8 +17,8 @@ It is intended to get a Mac into a state where it can pull your **private Nix co
 
 ## Usage
 
-- You can either copy/paste the commands from `bootstrap.sh` line by line,  
+- You can either copy/paste the commands from `install.sh` line by line,  
   or run the script directly:
 
 ```sh
-bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-bootstrap/main/bootstrap.sh)
+bash <(curl -sL https://raw.githubusercontent.com/optevo/nix-bootstrap/main/install.sh)

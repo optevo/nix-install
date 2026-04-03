@@ -17,8 +17,8 @@ CONFIG_DIR="${HOME}/.config/nix"             # Private Nix configuration
 echo "=== Starting real Nix bootstrap ==="
 echo "Config directory: $CONFIG_DIR"
 
-# 1. Install Apple Developer Tools if needed
-echo "Step 1: Checking Apple Developer Tools..."
+# Install Apple Developer Tools if needed
+echo "Checking Apple Developer Tools..."
 if ! xcode-select -p >/dev/null 2>&1; then
     echo "Installing Apple Developer Tools..."
     xcode-select --install
@@ -26,32 +26,33 @@ else
     echo "Apple Developer Tools already installed."
 fi
 
-# 2. Install Nix if missing
-echo "Step 2: Checking Nix..."
+# Install Nix if missing
+echo "Checking Nix..."
 
+# Check if Nix is available
 NIX_DAEMON_SCRIPT="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 
-# Load Nix environment if the daemon script exists
+# Install if missing
+if ! command -v nix >/dev/null 2>&1; then
+    echo "Nix not found — installing..."
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+fi
+
+# Always try to load environment (idempotent)
 if [ -r "$NIX_DAEMON_SCRIPT" ]; then
+    echo "Loading Nix environment..."
     . "$NIX_DAEMON_SCRIPT"
 fi
 
-# Install only if daemon script is missing or nix command is not available
-if [ ! -r "$NIX_DAEMON_SCRIPT" ] || ! command -v nix >/dev/null 2>&1; then
-    echo "Nix not found — installing via Determinate Systems installer..."
-    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-else
-    echo "Nix already installed."
+# Final sanity check
+if ! command -v nix >/dev/null 2>&1; then
+    echo "Error: Nix is installed but not available in this shell."
+    echo "Please restart your terminal and re-run the script."
+    exit 1
 fi
 
-# 3. Load Nix environment
-echo "Step 3: Loading Nix environment..."
-if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-fi
-
-# 4. Sync private configuration repository
-echo "Step 4: Syncing private configuration repository..."
+# Sync private configuration repository
+echo "Syncing private configuration repository..."
 
 CONFIG_DIR="$HOME/.config/nix"
 REPO_URL="https://github.com/optevo/nix-config.git"
@@ -62,7 +63,7 @@ git config --global credential.helper osxkeychain
 if [ -d "$CONFIG_DIR/.git" ]; then
     echo "Repository exists. Updating..."
     cd "$CONFIG_DIR"
-    sudo chown -R "$USER:staff" "."
+    chown -R "$USER:staff" "."
     git fetch origin
     git reset --hard origin/main
 else
@@ -85,25 +86,23 @@ else
     
     # Git will now prompt you natively and save the result to your Keychain
     git clone "$REPO_URL" "$CONFIG_DIR"
-    sudo chown -R "$USER:staff" "$CONFIG_DIR"
+    chown -R "$USER:staff" "$CONFIG_DIR"
 fi
 
-# 5. Apply nix-darwin configuration (requires root)
-echo "Step 5: Applying system configuration via nix-darwin."
+# Apply nix-darwin configuration (requires root)
+echo "Applying system configuration via nix-darwin."
 cd "$CONFIG_DIR"
 
-# --- DYNAMIC USER INJECTION ---
 echo "Injecting dynamic username into Nix configuration..."
 
-# 1. Get the real human user (even under sudo)
+# Get the real human user (even under sudo)
 REAL_USER=$(stat -f '%Su' /dev/console)
 
-# 2. Find the line with the marker and replace whatever is in the quotes with the real user
+# Find the line with the marker and replace whatever is in the quotes with the real user
 sed -i '' -E "s/system\.primaryUser = \".*\"; # @USER_MARKER@/system.primaryUser = \"$REAL_USER\"; # @USER_MARKER@/" "darwin-configuration.nix"
 
-# 3. Add the modified file to git so the Nix Flake can see the changes
+# Add the modified file to git so the Nix Flake can see the changes
 git add darwin-configuration.nix
-# ------------------------------
 
 # Move existing shell profiles so nix-darwin can take over
 for file in /etc/bashrc /etc/zshrc; do

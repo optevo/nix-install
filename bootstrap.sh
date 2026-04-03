@@ -20,8 +20,15 @@ fi
 
 # 2. Install Nix if missing
 echo "Step 2: Checking Nix..."
+
+# Load Nix environment in case it's already installed
+if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# Now check if nix is available
 if ! command -v nix >/dev/null 2>&1; then
-    echo "Installing Nix via Determinate Systems installer..."
+    echo "Nix not found — installing via Determinate Systems installer..."
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 else
     echo "Nix already installed."

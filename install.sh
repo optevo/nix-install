@@ -139,8 +139,13 @@ echo "Injecting dynamic username into Nix configuration..."
 # Get the real human user (even under sudo)
 REAL_USER=$(stat -f '%Su' /dev/console)
 
-# Find the line with the marker and replace whatever is in the quotes with the real user
-sed -i '' -E "s/system\.primaryUser = \".*\"; # @USER_MARKER@/system.primaryUser = \"$REAL_USER\"; # @USER_MARKER@/" "darwin-configuration.nix"
+# Replace the marker with the real user
+if grep -q '@USER_MARKER@' darwin-configuration.nix; then
+    sed -i '' -E "s/system\.primaryUser = \".*\"; # @USER_MARKER@/system.primaryUser = \"$REAL_USER\"; # @USER_MARKER@/" darwin-configuration.nix
+else
+    echo "Error: @USER_MARKER@ not found in darwin-configuration.nix. Aborting."
+    exit 1
+fi
 
 # Add the modified file to git so the Nix Flake can see the changes
 if ! git diff --quiet darwin-configuration.nix; then

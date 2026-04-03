@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Bootstrap for Nix + nix-darwin
 
+if [ "$(id -u)" -eq 0 ]; then
+    echo "This script should NOT be run with sudo. Please run as your normal user."
+    exit 1
+fi
+
 set -euo pipefail
 
 # Force the script to start in the user's home directory

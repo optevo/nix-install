@@ -84,6 +84,7 @@ echo "Preparing /etc/bashrc and /etc/zshrc (requires sudo)..."
 sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin 2>/dev/null || true
 sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin 2>/dev/null || true
 
+
 echo "Nix is applying system-wide changes (requires sudo)..."
 sudo nix run github:LnL7/nix-darwin -- switch --flake .#default
 

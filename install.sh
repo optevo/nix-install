@@ -44,9 +44,6 @@ fi
 # Install Nix if missing
 echo "Checking Nix..."
 
-# Check if Nix is available
-NIX_DAEMON_SCRIPT="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-
 # Install if missing
 if ! command -v nix >/dev/null 2>&1; then
     echo "Nix not found — installing..."
